@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author SLY
- * @description TODO
+ * @description
  * @date 2020/6/16
  */
 @Controller
@@ -113,7 +113,7 @@ public class DemoLock {
             resultMap.put("message", "系统错误");
             return resultMap;
         } finally {
-            if(timer != null){
+            if (timer != null) {
                 timer.cancel();
             }
             if (clientId.equals(redisTemplate.opsForValue().get(lockKey))) {
