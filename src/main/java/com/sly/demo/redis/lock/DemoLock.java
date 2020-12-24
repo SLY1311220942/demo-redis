@@ -39,7 +39,7 @@ public class DemoLock {
     @RequestMapping("/demoLock")
     public Map<String, Object> demoLock(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>(16);
-        RLock testLock = redissonClient.getLock("LOCK_KEY");
+        RLock testLock = redissonClient.getLock("LOCK_KEY:asdas");
         try {
             testLock.lock();
             int stock = Integer.parseInt(redisTemplate.opsForValue().get("stock"));
