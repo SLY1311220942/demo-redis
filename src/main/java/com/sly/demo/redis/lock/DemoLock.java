@@ -1,5 +1,6 @@
 package com.sly.demo.redis.lock;
 
+import com.sly.demo.redis.service.Stock;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -28,6 +29,54 @@ public class DemoLock {
     @Autowired
     private RedissonClient redissonClient;
 
+
+    @ResponseBody
+    @RequestMapping("/setStock")
+    public int setStock(int stock){
+        Stock.stock = stock;
+        return stock;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getStock")
+    public int getStock(){
+        return Stock.stock;
+    }
+
+    @ResponseBody
+    @RequestMapping("/demoUnLock")
+    public Map<String, Object> demoUnLock(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>(16);
+        try {
+            Random random = new Random();
+            int nextInt = random.nextInt(1000);
+            if (Stock.stock > 0) {
+                System.out.println(nextInt + ":start:" + System.currentTimeMillis());
+                for (int i = 0; i < 100000; i++) {
+                    for (int j = 0; j < 100000; j++) {
+
+                    }
+                }
+                System.out.println(nextInt + ":end:" + System.currentTimeMillis());
+                Stock.stock = Stock.stock - 1;
+                redisTemplate.opsForValue().set("stock", Stock.stock + "");
+                System.out.println("扣减成功：" + Stock.stock);
+                resultMap.put("status", 200);
+                resultMap.put("message", "扣减成功");
+            } else {
+                System.out.println("扣减失败");
+                resultMap.put("status", 400);
+                resultMap.put("message", "扣减失败");
+            }
+            return resultMap;
+        } catch (Exception e) {
+            System.out.println(ExceptionUtils.getStackTrace(e));
+            resultMap.put("status", 500);
+            resultMap.put("message", "系统错误");
+            return resultMap;
+        }
+    }
+
     /**
      * 使用Redisson实现分布式锁
      *
@@ -42,11 +91,19 @@ public class DemoLock {
         RLock testLock = redissonClient.getLock("LOCK_KEY:asdas");
         try {
             testLock.lock();
-            int stock = Integer.parseInt(redisTemplate.opsForValue().get("stock"));
-            if (stock > 0) {
-                int realStock = stock - 1;
-                redisTemplate.opsForValue().set("stock", realStock + "");
-                System.out.println("扣减成功：" + realStock);
+            Random random = new Random();
+            int nextInt = random.nextInt(1000);
+            if (Stock.stock > 0) {
+                System.out.println(nextInt + ":start:" + System.currentTimeMillis());
+                for (int i = 0; i < 100000; i++) {
+                    for (int j = 0; j < 100000; j++) {
+
+                    }
+                }
+                System.out.println(nextInt + ":end:" + System.currentTimeMillis());
+                Stock.stock = Stock.stock - 1;
+                redisTemplate.opsForValue().set("stock", Stock.stock + "");
+                System.out.println("扣减成功：" + Stock.stock);
                 resultMap.put("status", 200);
                 resultMap.put("message", "扣减成功");
             } else {
